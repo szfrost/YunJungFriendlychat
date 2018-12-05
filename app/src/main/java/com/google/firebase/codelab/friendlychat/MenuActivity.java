@@ -22,6 +22,7 @@ public class MenuActivity extends AppCompatActivity {
         Button mButton2 = (Button) findViewById(R.id.button2);
         Button mButton3 = (Button) findViewById(R.id.button3);
         Button mButton4 = (Button) findViewById(R.id.button4);
+        Button mButton5 = (Button) findViewById(R.id.button5);
 
         mButton1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +51,14 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), Board40sActivity.class );
+                startActivity(intent);
+            }
+        });
+
+        mButton5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), Board10sActivity.class );
                 startActivity(intent);
             }
         });

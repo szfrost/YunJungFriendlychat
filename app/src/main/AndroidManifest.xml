@@ -22,7 +22,8 @@
         <activity android:name=".Board10sActivity" />
         <activity android:name=".Board20sActivity" />
         <activity android:name=".Board30sActivity" />
-        <activity android:name=".Board40sActivity"></activity>
+        <activity android:name=".Board40sActivity" />
+        <activity android:name=".Board50sActivity"></activity>
     </application>
 
 </manifest>

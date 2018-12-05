@@ -12,6 +12,10 @@ import android.widget.TextView;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.*;
+import org.jsoup.select.*;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,7 +37,7 @@ public class Board10sActivity extends AppCompatActivity {
 
 
 
-
+    String keyword;
     boolean inItem = false, inTitle = false, inDescription = false, inDate = false, inLink = false;
     String title=null, description=null, date=null, link=null;
 
@@ -54,11 +58,29 @@ public class Board10sActivity extends AppCompatActivity {
 
 
 
+
+
     public void getNews(){
         new Thread(){
             public void run(){
                 try{
-                    String searchWord = URLEncoder.encode("안마의자", "UTF-8");
+                    //주소에 있는 링크에 있는 태그 속 내용 가져옴. 그중에서 검색어인 텍스트만 가져옴
+                    Document document = Jsoup.connect("https://datalab.naver.com/keyword/realtimeList.naver").get();
+                    Elements items = document.select("span.title");  //items 에는 전체연령대, 10대,20대,30대,40대,50대이상의 실시간 급상승검색어
+                                                                                 //1위에서 20위까지가 순차적으로 들어있음(태그포함)
+                    ArrayList<String> keyword10 = new ArrayList<String>();      //10대의 실시간 급상승검색어 1위~20위를 저장할 ArrayList
+
+                    int i;
+                    for(i = 20; i<40; i++ ){
+                        keyword10.add(items.get(i).text());               //index 0~19는 전체연령대의 실시간급상승 검색어 1위~20위
+                                                                          //index 20~39는 10대의 실시간급상승 검색어 1위~20위 ArrayList에 순차적으로 추가.
+                    }
+
+                    int ran = (int)(Math.random()*20);                  //keyword10에 들어있는 20개의 검색어 키워드 중 1개를 임의로 선택해 반환.
+                    keyword = keyword10.get(ran);
+
+
+                    String searchWord = URLEncoder.encode(keyword, "UTF-8");
                     String apiURL = "https://openapi.naver.com/v1/search/news.xml?query="+searchWord+"&display=3&start=1&sort=sim";
                     URL url = new URL(apiURL);
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();

@@ -10,7 +10,10 @@ import android.widget.Toast;
 import android.widget.Button;
 import android.widget.EditText;
 
+
 public class MenuActivity extends AppCompatActivity {
+
+    static public int age;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,13 +31,15 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), Board10sActivity.class );
+                age = 10;
                 startActivity(intent);
             }
         });
         mButton2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Board20sActivity.class );
+                Intent intent = new Intent(getApplicationContext(), Board10sActivity.class );
+                age = 20;
                 startActivity(intent);
             }
         });
@@ -42,7 +47,8 @@ public class MenuActivity extends AppCompatActivity {
         mButton3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Board30sActivity.class );
+                Intent intent = new Intent(getApplicationContext(), Board10sActivity.class );
+                age = 30;
                 startActivity(intent);
             }
         });
@@ -50,7 +56,8 @@ public class MenuActivity extends AppCompatActivity {
         mButton4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), Board40sActivity.class );
+                Intent intent = new Intent(getApplicationContext(), Board10sActivity.class );
+                age = 40;
                 startActivity(intent);
             }
         });
@@ -59,6 +66,7 @@ public class MenuActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), Board10sActivity.class );
+                age = 50;
                 startActivity(intent);
             }
         });

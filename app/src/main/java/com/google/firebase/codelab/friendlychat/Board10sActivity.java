@@ -4,6 +4,8 @@ import android.app.ListActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.content.Intent;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.SimpleAdapter;
@@ -27,7 +29,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.google.firebase.codelab.friendlychat.MenuActivity.age;
+
 public class Board10sActivity extends AppCompatActivity {
+
+    //cardview 레이아웃
+    RecyclerView mRecyclerView;
+    RecyclerView.LayoutManager mLayoutManager;
+
+    public ArrayList<Item> ItemArrayList = new ArrayList<>(); //기사 content
 
     String clientId = "qK6ocISgzi6FedNc8imk";//애플리케이션 클라이언트 아이디값";
     String clientSecret = "kEPlQcl4eW";//애플리케이션 클라이언트 시크릿값";
@@ -45,22 +55,33 @@ public class Board10sActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_board10s);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
 
-        // Get the Intent that started this activity and extract the string
-        Intent intent = getIntent();
+        // use a linear layout manager
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
 
-        // Capture the layout's TextView and set the string as its text
-        textView = findViewById(R.id.textView);
 
+        //뉴스 content가지고오기
         getNews();
+        while(ItemArrayList.size()<5){
+            System.out.println("*지금" + ItemArrayList.size());
+        }
+
+        //카드뷰 레이아웃
+        My10Adapter mAdapter = new My10Adapter(ItemArrayList);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
 
 
 
 
-
     public void getNews(){
+
         new Thread(){
             public void run(){
                 try{
@@ -71,7 +92,7 @@ public class Board10sActivity extends AppCompatActivity {
                     ArrayList<String> keyword10 = new ArrayList<String>();      //10대의 실시간 급상승검색어 1위~20위를 저장할 ArrayList
 
                     int i;
-                    for(i = 20; i<40; i++ ){
+                    for(i = age*2; i<age*4; i++ ){
                         keyword10.add(items.get(i).text());               //index 0~19는 전체연령대의 실시간급상승 검색어 1위~20위
                                                                           //index 20~39는 10대의 실시간급상승 검색어 1위~20위 ArrayList에 순차적으로 추가.
                     }
@@ -81,7 +102,7 @@ public class Board10sActivity extends AppCompatActivity {
 
 
                     String searchWord = URLEncoder.encode(keyword, "UTF-8");
-                    String apiURL = "https://openapi.naver.com/v1/search/news.xml?query="+searchWord+"&display=3&start=1&sort=sim";
+                    String apiURL = "https://openapi.naver.com/v1/search/news.xml?query="+searchWord+"&display=5&start=1&sort=sim";
                     URL url = new URL(apiURL);
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setRequestMethod("GET");
@@ -142,53 +163,30 @@ public class Board10sActivity extends AppCompatActivity {
                                         break;
 
                                     case XmlPullParser.END_TAG:
-                                        if (parser.getName().equals("item")) {
-                                            runOnUiThread(new Runnable() {
-                                                public void run() {
-                                                    textView.append("제목: " + title + "\n내용: " + description + "\n날짜: " + date + "\n링크: " + link + "\n\n");
+                                        //쓸모없는 단어 제거
+                                        String match = "[^\uAC00-\uD7A3xfe0-9a-zA-Z\\s]";
 
-                                                    inItem = false;
-                                                }
-                                            });
+                                        title = title.replace("br","");
+                                        title = title.replace("b","");
+                                        title = title.replace("quot","");
+                                        title = title.replace("lt","");
+                                        title = title.replace("gt","");
+                                        title = title.replaceAll(match,"");
 
+                                        description = description.replace("br","");
+                                        description = description.replace("b","");
+                                        description = description.replace("quot","");
+                                        description = description.replace("lt","");
+                                        description = description.replace("gt","");
+                                        description = description.replaceAll(match,"");
+
+                                        ItemArrayList.add(new Item(title, description, date, link));
                                         }
                                         break;
                                 }
 
-
                                 parserEvent = parser.next();
                             }
-
-
-
-                    /*
-                    int responseCode = con.getResponseCode();
-                    BufferedReader br;
-
-                    if (responseCode == 200) {
-                        br = new BufferedReader(new InputStreamReader(con.getInputStream()));
-                        String inputLine;
-                        final StringBuffer response = new StringBuffer();
-                        while ((inputLine = br.readLine()) != null)
-
-                        {
-                            response.append(inputLine);
-
-                        }
-
-                        runOnUiThread(new Runnable() {
-                            public void run() {
-
-                                textView.setText(response.toString());
-                            }
-                        });
-
-                        br.close();
-
-                    } else{
-                        br = new BufferedReader(new InputStreamReader(con.getErrorStream()));
-                    }*/
-                    }
                 }catch(Exception e){
                     System.out.println(e + "   @@@@@@@@@@@@@@@@@#################################");
                 }
